@@ -333,6 +333,28 @@ nav.tabbar button.on { color: var(--accent); }
 }
 .row .icon.tr { background: var(--c8); font-size: 17px; }
 
+/* V8 */
+.people.three { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 760px) { .people.three { grid-template-columns: 1fr 1fr; } .people.three .person.joint { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 12px; } }
+@media (max-width: 350px) { .people.three .person.joint { grid-column: auto; } }
+.person.joint .p-name .avatar { background: var(--c8); }
+.p-balance { display: flex; justify-content: space-between; gap: 6px; font-size: 13px; color: var(--text-2); margin-top: 6px; }
+.p-balance b { color: var(--text); }
+.seg.wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); grid-auto-flow: row; }
+.seg.wrap button { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 10px 6px; }
+@media (max-width: 480px) { #fPaid { grid-template-columns: 1fr 1fr; grid-auto-flow: row; } }
+.pot { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.pot:last-child { border-bottom: 0; }
+.pot-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.pot-head .nm { font-weight: 650; }
+.pot-head .val { font-weight: 700; font-size: 17px; white-space: nowrap; }
+.pot-sub { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+.pot-edit { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.pot-edit .input { min-height: 40px; padding: 8px 10px; font-size: 15px; }
+.pot-edit label { font-size: 13px; color: var(--text-2); display: flex; gap: 6px; align-items: center; white-space: nowrap; }
+.pot-edit label input { accent-color: var(--accent); width: 18px; height: 18px; }
+.pot-edit .del { border: 0; background: var(--surface-2); width: 36px; height: 36px; border-radius: 10px; font-size: 18px; color: var(--critical); }
+
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
 table.data td, table.data th { padding: 6px 4px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -389,7 +411,7 @@ details.table-view summary { cursor: pointer; font-size: 13px; color: var(--text
     <div class="kpis" id="kpis"></div>
     <div class="grid overview-grid" style="margin-top:14px">
       <div class="card span2">
-        <h2>Pro Person <span class="sub" id="splitSub"></span></h2>
+        <h2>Pro Person &amp; Konto <span class="sub" id="splitSub"></span></h2>
         <div id="people"></div>
       </div>
       <div class="card span2">
@@ -486,6 +508,11 @@ details.table-view summary { cursor: pointer; font-size: 13px; color: var(--text
         <p style="margin:0">Die Namen erscheinen in der ganzen App in dieser Farbe.</p>
       </div>
       <div class="card">
+        <h2>Spartöpfe <button class="btn small primary" id="addPot" type="button">+ Topf</button></h2>
+        <div id="potEditList"></div>
+        <p style="margin:6px 0 0">„Investment“ markiert Töpfe wie ein ETF-Depot. Beim Sparen wählst du, von welchem Konto in welchen Topf.</p>
+      </div>
+      <div class="card">
         <h2>Darstellung</h2>
         <div class="seg" id="themeSeg">
           <button data-theme="auto">Automatisch</button>
@@ -533,13 +560,14 @@ details.table-view summary { cursor: pointer; font-size: 13px; color: var(--text
     <label class="field"><span>Betrag (€)</span><input class="input amount num" id="fAmount" inputmode="decimal" placeholder="0,00" required></label>
     <label class="field"><span>Bezeichnung</span><input class="input" id="fName" placeholder="z. B. Miete, Supermarkt, Gehalt" maxlength="60"></label>
     <div class="field" id="incomeFromField"><span>Von wem?</span><div class="seg full" id="fFrom"></div></div>
-    <div class="field" id="incRecvField"><span>Auf wessen Konto eingegangen?</span><div class="seg full" id="fRecv"></div></div>
+    <div class="field" id="incRecvField"><span>Auf welches Konto eingegangen?</span><div class="seg full" id="fRecv"></div></div>
     <div class="field" id="paidByField"><span>Wer hat bezahlt?</span><div class="seg full" id="fPaid"></div></div>
+    <div class="field" id="payPotField"><span>Aus welchem Spartopf?</span><div class="seg wrap" id="fPayPot"></div></div>
     <div class="field" id="forWhomField"><span>Für wen?</span><div class="seg full" id="fFor"></div></div>
-    <div class="field" id="targetField"><span>Wohin?</span><div class="seg full" id="fTarget"></div></div>
-    <div class="field" id="saverField"><span>Wer spart?</span><div class="seg full" id="fSaver"></div></div>
-    <div class="field" id="savePaidField"><span>Wer hat überwiesen?</span><div class="seg full" id="fSavePaid"></div></div>
-    <div class="field" id="transferField"><span>Wer überweist?</span><div class="seg full" id="fTrFrom"></div><small class="muted" id="trHint" style="font-size:13px"></small></div>
+    <div class="field" id="saveFromField"><span>Von welchem Konto?</span><div class="seg full" id="fSaveFrom"></div></div>
+    <div class="field" id="targetField"><span>In welchen Spartopf?</span><div class="seg wrap" id="fTarget"></div></div>
+    <div class="field" id="transferField"><span>Von</span><div class="seg full" id="fTrFrom"></div></div>
+    <div class="field" id="transferToField"><span>An</span><div class="seg full" id="fTrTo"></div><small class="muted" id="trHint" style="font-size:13px"></small></div>
     <label class="field" id="catField"><span>Rubrik</span><select class="input" id="fCat"></select></label>
     <label class="field"><span>Datum</span><input class="input" type="date" id="fDate" required></label>
     <label class="check"><input type="checkbox" id="fFixed"><span>Fixposten<small>Kommt jeden Monat wieder (z. B. Miete, Gehalt, Abos) und kann in den nächsten Monat übernommen werden.</small></span></label>
@@ -605,31 +633,36 @@ function freshState() {
   };
 }
 function defaultSettings() {
-  return { theme: 'auto', lastBackup: null, people: ['Person 1', 'Person 2'], colors: [6, 4], lastPayer: 0 };
+  return { theme: 'auto', lastBackup: null, people: ['Person 1', 'Person 2'], colors: [6, 4], pots: defaultPots(), lastPayer: 0 };
 }
+function defaultPots() {
+  return [{ id: 'invest', name: 'ETF-Depot', invest: true }, { id: 'savings', name: 'Sparkonto', invest: false }, { id: 'vacation', name: 'Urlaubskonto', invest: false }];
+}
+const isAcct = a => a === 0 || a === 1 || a === 'joint';
+function validPots(p) { return Array.isArray(p) && p.length > 0 && p.every(x => x && typeof x.id === 'string' && typeof x.name === 'string'); }
 // Ältere Daten (ohne Personen) ergänzen
 function migrate(s) {
   s.settings = Object.assign(defaultSettings(), s.settings || {});
   if (!Array.isArray(s.settings.people) || s.settings.people.length !== 2) s.settings.people = ['Person 1', 'Person 2'];
   if (!Array.isArray(s.settings.colors) || s.settings.colors.length !== 2 || !s.settings.colors.every(c => Number.isInteger(c) && c >= 0 && c < 9)) s.settings.colors = [6, 4];
   delete s.settings.split; delete s.settings.custom;
+  if (!validPots(s.settings.pots)) s.settings.pots = defaultPots();
   for (const e of s.entries) {
     if (e.type === 'income') {
       if (e.person !== 0 && e.person !== 1 && e.person !== 'shared') e.person = 0;
-      if (e.person === 'shared') { if (e.receivedBy !== 0 && e.receivedBy !== 1) e.receivedBy = 0; }
-      else delete e.receivedBy;
+      if (!isAcct(e.receivedBy)) e.receivedBy = e.person === 'shared' ? 0 : e.person;
     }
     else if (e.type === 'transfer') {
-      if (e.paidBy !== 0 && e.paidBy !== 1) e.paidBy = 0;
-      e.to = 1 - e.paidBy;
+      if (!isAcct(e.paidBy)) e.paidBy = 0;
+      if (!isAcct(e.to) || e.to === e.paidBy) e.to = e.paidBy === 0 ? 1 : 0;
     }
     else if (e.type === 'saving') {
-      if (e.target !== 'invest' && e.target !== 'savings') e.target = 'savings';
-      if (e.saver !== 0 && e.saver !== 1 && e.saver !== 'shared') e.saver = 0;
-      if (e.paidBy !== 0 && e.paidBy !== 1) e.paidBy = e.saver === 'shared' ? 0 : e.saver;
+      if (typeof e.target !== 'string' || !e.target) e.target = 'savings';
+      if (!isAcct(e.paidBy)) e.paidBy = (e.saver === 0 || e.saver === 1) ? e.saver : 0;
     }
     else {
-      if (e.paidBy !== 0 && e.paidBy !== 1) e.paidBy = 0;
+      if (!isAcct(e.paidBy) && e.paidBy !== 'pot') e.paidBy = 0;
+      if (e.paidBy === 'pot' && typeof e.pot !== 'string') e.pot = 'vacation';
       if (e.forWhom !== 0 && e.forWhom !== 1 && e.forWhom !== 'shared') e.forWhom = 'shared';
     }
   }
@@ -691,50 +724,69 @@ const pslot = i => { const c = state.settings.colors && state.settings.colors[i]
 const pcolor = i => `var(--c${pslot(i)})`;
 const ptext = i => `var(--tc${pslot(i)})`;
 const pn = i => `<span class="pn" style="color:${ptext(i)}">${esc(pname(i))}</span>`;
-const TARGETS = { invest: 'Investieren', savings: 'Sparkonto' };
-const saverLabel = v => v === 'shared' ? 'Gemeinsam' : pname(v);
+const JOINT = 'Gemeinsames Konto', JOINT_S = 'Gem. Konto';
+const pots = () => state.settings.pots || [];
+const potById = id => pots().find(p => p.id === id);
+const potName = id => (potById(id) || { name: 'Unbekannter Topf' }).name;
+const acctName = a => a === 'joint' ? JOINT : pname(a);
+const acctShort = a => a === 'joint' ? JOINT_S : pname(a);
+const acctHTML = a => a === 'joint' ? `<span class="pn" style="color:var(--tc8)">${JOINT_S}</span>` : pn(a);
+const ACCTS = [0, 1, 'joint'];
+const ai = a => a === 'joint' ? 2 : a;
+const keyToAcct = k => k === 'joint' ? 'joint' : Number(k);
+const usesJoint = () => state.entries.some(e => e.receivedBy === 'joint' || e.paidBy === 'joint' || e.to === 'joint');
 const forLabel = f => f === 'shared' ? 'Gemeinsam' : pname(f);
 
-// "Tatsächlich bezahlt": alles zählt bei der Person, über deren Konto es läuft
-function personStats(key) {
-  const z = () => [0, 0];
-  const inc = z(), sharedIncRecv = z(), selfExp = z(), sharedExp = z(), otherExp = z();
-  const inv = z(), spk = z(), tOut = z(), tIn = z();
-  for (const e of monthEntries(key)) {
+// Kontoauszug-Logik: alles zählt bei dem Konto, über das es läuft (Andreas, Katrin, Gemeinsames Konto)
+function accountStats(entries) {
+  const add = (o, k, v) => { o[k] = (o[k] || 0) + v; };
+  const S = ACCTS.map(() => ({ incOwn: 0, incShared: 0, incOther: {}, tIn: {}, tOut: {}, expSelf: 0, expShared: 0, expOther: {}, pots: {}, into: 0, out: 0, rest: 0 }));
+  for (const e of entries) {
     const a = e.amount;
     if (e.type === 'income') {
-      if (e.person === 'shared') sharedIncRecv[e.receivedBy === 1 ? 1 : 0] += a; else inc[e.person] += a;
-    } else if (e.type === 'saving') {
-      e.target === 'invest' ? inv[e.paidBy] += a : spk[e.paidBy] += a;
+      const s = S[ai(e.receivedBy)];
+      if (e.person === 'shared') s.incShared += a; else if (e.person === e.receivedBy) s.incOwn += a; else add(s.incOther, e.person, a);
+      s.into += a;
     } else if (e.type === 'transfer') {
-      tOut[e.paidBy] += a; tIn[1 - e.paidBy] += a;
-    } else {
-      const p = e.paidBy;
-      if (e.forWhom === 'shared') sharedExp[p] += a; else if (e.forWhom === p) selfExp[p] += a; else otherExp[p] += a;
+      add(S[ai(e.paidBy)].tOut, e.to, a); S[ai(e.paidBy)].out += a;
+      add(S[ai(e.to)].tIn, e.paidBy, a); S[ai(e.to)].into += a;
+    } else if (e.type === 'saving') {
+      const s = S[ai(e.paidBy)]; add(s.pots, e.target, a); s.out += a;
+    } else if (e.type === 'expense') {
+      if (e.paidBy === 'pot') continue; // aus einem Spartopf bezahlt: belastet kein Konto
+      const s = S[ai(e.paidBy)];
+      if (e.forWhom === 'shared') s.expShared += a; else if (e.forWhom === e.paidBy) s.expSelf += a; else add(s.expOther, e.forWhom, a);
+      s.out += a;
     }
   }
-  const r = { inc, sharedIncRecv, selfExp, sharedExp, otherExp, inv, spk, tOut, tIn, into: z(), out: z(), rest: z(), saved: z() };
-  for (const i of [0, 1]) {
-    r.into[i] = inc[i] + sharedIncRecv[i] + tIn[i];
-    r.saved[i] = inv[i] + spk[i];
-    r.out[i] = selfExp[i] + sharedExp[i] + otherExp[i] + r.saved[i] + tOut[i];
-    r.rest[i] = r.into[i] - r.out[i];
+  for (const s of S) s.rest = s.into - s.out;
+  return S;
+}
+function personStats(key) { return accountStats(monthEntries(key)); }
+function entriesUpTo(key) { return state.entries.filter(e => monthKey(e.date) <= key); }
+function potStats(key) {
+  const m = {};
+  const g = id => m[id] || (m[id] = { dep: {}, depTotal: 0, wd: 0, month: 0 });
+  for (const e of entriesUpTo(key)) {
+    if (e.type === 'saving') { const p = g(e.target); p.dep[e.paidBy] = (p.dep[e.paidBy] || 0) + e.amount; p.depTotal += e.amount; if (monthKey(e.date) === key) p.month += e.amount; }
+    else if (e.type === 'expense' && e.paidBy === 'pot') { const p = g(e.pot); p.wd += e.amount; if (monthKey(e.date) === key) p.month -= e.amount; }
   }
-  return r;
+  return m;
 }
 let entryFilter = 'all';
 let catFilterVal = '';
 
 function monthEntries(key) { return state.entries.filter(e => monthKey(e.date) === key); }
 function totals(key) {
-  let inc = 0, exp = 0, sav = 0, inv = 0;
+  let inc = 0, exp = 0, sav = 0, inv = 0, fromPots = 0;
   for (const e of monthEntries(key)) {
     if (e.type === 'income') inc += e.amount;
-    else if (e.type === 'saving') { sav += e.amount; if (e.target === 'invest') inv += e.amount; }
-    else if (e.type === 'expense') exp += e.amount;
-    // Überweisungen zwischen den Personen ändern die Haushaltssummen nicht
+    else if (e.type === 'saving') { sav += e.amount; if ((potById(e.target) || {}).invest) inv += e.amount; }
+    else if (e.type === 'expense') { exp += e.amount; if (e.paidBy === 'pot') fromPots += e.amount; }
+    // Überweisungen zwischen Konten ändern die Haushaltssummen nicht
   }
-  return { inc, exp, sav, inv, spk: sav - inv, rest: inc - exp - sav };
+  // Ausgaben aus Spartöpfen werden mit Erspartem bezahlt, nicht aus dem laufenden Budget
+  return { inc, exp, sav, inv, spk: sav - inv, fromPots, rest: inc - (exp - fromPots) - sav };
 }
 
 let toastT;
@@ -780,68 +832,78 @@ function bannerHTML(key) {
 
 /* ================= Render: Übersicht ================= */
 function renderKPIs() {
-  const { inc, exp, sav, inv, spk, rest } = totals(current);
+  const { inc, exp, sav, inv, spk, rest, fromPots } = totals(current);
   const rate = inc > 0 ? sav / inc : null;
   const neg = rest < 0;
   $('#kpis').innerHTML = `
     <div class="kpi"><div class="label"><i class="dot" style="background:var(--income)"></i>Einnahmen</div><div class="value num">${fmt(inc)}</div></div>
-    <div class="kpi"><div class="label"><i class="dot" style="background:var(--expense)"></i>Ausgaben</div><div class="value num">${fmt(exp)}</div></div>
+    <div class="kpi"><div class="label"><i class="dot" style="background:var(--expense)"></i>Ausgaben</div><div class="value num">${fmt(exp)}</div>${fromPots ? `<div class="hint">davon ${fmt(fromPots)} aus Spartöpfen</div>` : ''}</div>
     <div class="kpi"><div class="label"><i class="dot" style="background:var(--saving)"></i>Gespart &amp; investiert</div><div class="value num">${fmt(sav)}</div><div class="hint">${rate == null ? 'Sparquote –' : `Sparquote ${pct(rate)}`}</div></div>
     <div class="kpi"><div class="label">Frei verfügbar</div><div class="value num ${neg ? 'status-critical' : ''}">${neg ? '⚠︎ ' : ''}${fmt(rest)}</div><div class="hint">${neg ? 'Mehr verplant als eingenommen' : 'nach Ausgaben &amp; Sparen'}</div></div>`;
 }
 
 function renderPeople() {
-  const st = personStats(current);
-  $('#splitSub').textContent = 'tatsächlich über das eigene Konto';
+  const S = personStats(current);
+  const showJoint = usesJoint();
+  $('#splitSub').textContent = 'was tatsächlich über das Konto lief';
   const line = (label, v, sign, always) => (v || always) ? `<div class="p-line"><span>${label}</span><b class="num">${sign}${fmt(v)}</b></div>` : '';
-  const col = i => {
-    const o = 1 - i;
-    const used = st.into[i] > 0 ? st.out[i] / st.into[i] : null;
-    const over = st.rest[i] < 0;
-    return `<div class="person">
-      <div class="p-name"><span class="avatar" style="background:${pcolor(i)}">${esc(pname(i).charAt(0).toUpperCase())}</span>${pn(i)}</div>
-      ${line('Einkommen', st.inc[i], '+', true)}
-      ${line('Gem. Einnahmen', st.sharedIncRecv[i], '+')}
-      ${line(`Überweisung von ${esc(pname(o))}`, st.tIn[i], '+')}
-      ${line('Für sich selbst', st.selfExp[i], '−', true)}
-      ${line('Gemeinsames', st.sharedExp[i], '−', true)}
-      ${line(`Für ${esc(pname(o))}`, st.otherExp[i], '−')}
-      ${line('Investiert', st.inv[i], '−', true)}
-      ${line('Sparkonto', st.spk[i], '−', true)}
-      ${line(`Überweisung an ${esc(pname(o))}`, st.tOut[i], '−')}
-      <div class="p-rest"><span>Frei</span><span class="num ${over ? 'status-critical' : ''}">${over ? '⚠︎ ' : ''}${fmt(st.rest[i])}</span></div>
-      <div class="p-bar">
-        <div class="track"><div class="fill" style="width:${used == null ? 0 : Math.min(used, 1) * 100}%;background:${over ? 'var(--critical)' : pcolor(i)}"></div></div>
+  const each = (obj, fn) => Object.entries(obj).map(([k, v]) => fn(keyToAcct(k), v)).join('');
+  const col = acct => {
+    const s = S[ai(acct)], joint = acct === 'joint';
+    const used = s.into > 0 ? s.out / s.into : null;
+    const over = s.rest < 0;
+    const head = joint
+      ? `<div class="p-name"><span class="avatar">€</span><span class="pn">${JOINT}</span></div>`
+      : `<div class="p-name"><span class="avatar" style="background:${pcolor(acct)}">${esc(pname(acct).charAt(0).toUpperCase())}</span>${pn(acct)}</div>`;
+    let h = head;
+    if (joint) h += line('Einnahmen', s.incOwn + s.incShared + Object.values(s.incOther).reduce((x, y) => x + y, 0), '+', true);
+    else {
+      h += line('Einkommen', s.incOwn, '+', true);
+      h += line('Gem. Einnahmen', s.incShared, '+');
+      h += each(s.incOther, (k, v) => line(`Einkommen ${esc(acctShort(k))}`, v, '+'));
+    }
+    h += each(s.tIn, (k, v) => line(`Überweisung von ${esc(acctShort(k))}`, v, '+'));
+    if (!joint) h += line('Für sich selbst', s.expSelf, '−', true);
+    h += line('Gemeinsames', s.expShared, '−', !joint);
+    h += each(s.expOther, (k, v) => line(`Für ${esc(acctShort(k))}`, v, '−'));
+    h += Object.entries(s.pots).map(([id, v]) => line(esc(potName(id)), v, '−')).join('');
+    h += each(s.tOut, (k, v) => line(`Überweisung an ${esc(acctShort(k))}`, v, '−'));
+    h += `<div class="p-rest"><span>${joint ? 'Saldo Monat' : 'Frei'}</span><span class="num ${over ? 'status-critical' : ''}">${over ? '⚠︎ ' : ''}${fmt(s.rest)}</span></div>`;
+    if (joint) {
+      const bal = accountStats(entriesUpTo(current))[2].rest;
+      h += `<div class="p-balance"><span>Kontostand seit Beginn</span><b class="num">${fmt(bal)}</b></div>`;
+    } else {
+      h += `<div class="p-bar">
+        <div class="track"><div class="fill" style="width:${used == null ? 0 : Math.min(used, 1) * 100}%;background:${over ? 'var(--critical)' : pcolor(acct)}"></div></div>
         <div class="budget-note ${over ? 'over' : ''}">${used == null ? 'Noch kein Geldeingang eingetragen' : `${pct(used)} vom Geldeingang ausgegeben`}</div>
-      </div>
-    </div>`;
+      </div>`;
+    }
+    return `<div class="person${joint ? ' joint' : ''}">${h}</div>`;
   };
-  $('#people').innerHTML = `<div class="people">${col(0)}${col(1)}</div>
-    <div class="split-info">Jede Buchung zählt bei der Person, die bezahlt, überwiesen oder das Geld erhalten hat.</div>`;
+  $('#people').innerHTML = `<div class="people${showJoint ? ' three' : ''}">${col(0)}${col(1)}${showJoint ? col('joint') : ''}</div>
+    <div class="split-info">Jede Buchung zählt bei dem Konto, über das sie gelaufen ist. Ausgaben aus Spartöpfen belasten kein Konto.</div>`;
 }
 
 function renderSaved() {
-  // alle Monate bis einschließlich des angezeigten Monats
-  const months = [...new Set(state.entries.filter(e => e.type === 'saving').map(e => monthKey(e.date)))].filter(k => k <= current);
-  const inv = [0, 0], spk = [0, 0];
-  for (const k of months) { const st = personStats(k); for (const i of [0, 1]) { inv[i] += st.inv[i]; spk[i] += st.spk[i]; } }
-  const total = inv[0] + inv[1] + spk[0] + spk[1];
-  const thisMonth = totals(current).sav;
+  const P = potStats(current);
+  const ids = pots().map(p => p.id).concat(Object.keys(P).filter(id => !potById(id)));
+  const list = ids.filter(id => P[id]);
+  const total = list.reduce((x, id) => x + P[id].depTotal - P[id].wd, 0);
+  const month = totals(current).sav;
   $('#savedSub').textContent = `bis Ende ${monthName(current)}`;
-  if (!total) {
-    $('#saved').innerHTML = `<div class="empty"><strong>Noch nichts angespart</strong>Trage eine Buchung vom Typ „Sparen“ ein, z. B. deinen monatlichen ETF-Sparplan.</div>`;
+  if (!list.length) {
+    $('#saved').innerHTML = `<div class="empty"><strong>Noch nichts angespart</strong>Trage eine Buchung vom Typ „Sparen“ ein, z. B. den monatlichen Betrag aufs Urlaubskonto.</div>`;
     return;
   }
-  const row = (label, a, b, bold) => `<tr${bold ? ' style="font-weight:700"' : ''}><td>${label}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a + b)}</td></tr>`;
   $('#saved').innerHTML = `
     <div class="saved-total num">${fmt(total)}</div>
-    <div class="saved-sub">${thisMonth ? `davon ${fmt(thisMonth)} in ${monthName(current).split(' ')[0]} · ` : ''}${months.length} Monat${months.length > 1 ? 'e' : ''} mit Sparbuchungen · nur Einzahlungen, ohne Kursentwicklung</div>
-    <table class="data num"><thead><tr><th></th><th>Investiert</th><th>Sparkonto</th><th>Gesamt</th></tr></thead><tbody>
-      ${row(pn(0), inv[0], spk[0])}
-      ${row(pn(1), inv[1], spk[1])}
-      ${row('Zusammen', inv[0] + inv[1], spk[0] + spk[1], true)}
-    </tbody></table>
-    <div class="split-info">Gemeinsame Sparbuchungen zählen bei der Person, die überwiesen hat.</div>`;
+    <div class="saved-sub">${month ? `diesen Monat eingezahlt: ${fmt(month)} · ` : ''}Stand aller Töpfe · nur Einzahlungen, ohne Kursentwicklung</div>
+    ${list.map(id => {
+      const p = P[id], pot = potById(id) || {};
+      const deps = Object.entries(p.dep).map(([k, v]) => `${acctHTML(keyToAcct(k))} ${fmt(v)}`).join(' · ');
+      return `<div class="pot"><div class="pot-head"><span class="nm">${esc(potName(id))}${pot.invest ? '<span class="badge">Investment</span>' : ''}</span><span class="val num">${fmt(p.depTotal - p.wd)}</span></div>
+        <div class="pot-sub">eingezahlt: ${deps || '–'}${p.wd ? ` · entnommen ${fmt(p.wd)}` : ''}</div></div>`;
+    }).join('')}`;
 }
 
 let fixFilterVal = 'all';
@@ -1017,18 +1079,19 @@ function renderEntries() {
   sel.innerHTML = `<option value="">Alle Rubriken</option>` + state.categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('') + `<option value="_none">Ohne Rubrik</option>`;
   sel.value = catFilterVal;
   const psel = $('#personFilter');
-  psel.innerHTML = `<option value="">Alle Personen</option><option value="0">${esc(pname(0))}</option><option value="1">${esc(pname(1))}</option><option value="shared">Gemeinsam</option>`;
+  psel.innerHTML = `<option value="">Alle Personen</option><option value="0">${esc(pname(0))}</option><option value="1">${esc(pname(1))}</option><option value="shared">Gemeinsam</option><option value="joint">${JOINT}</option><option value="pots">Aus Spartöpfen</option>`;
   psel.value = personFilterVal;
   $$('#entryFilter button').forEach(b => b.classList.toggle('on', b.dataset.f === entryFilter));
 
   let list = monthEntries(current);
   if (entryFilter !== 'all') list = list.filter(e => e.type === entryFilter);
   if (personFilterVal !== '') {
-    const pf = personFilterVal === 'shared' ? 'shared' : Number(personFilterVal);
-    // Personenfilter = wer hat bezahlt / überwiesen / erhalten
+    const pf = /^\d$/.test(personFilterVal) ? Number(personFilterVal) : personFilterVal;
+    // Personenfilter = über wessen Konto lief es (bezahlt / überwiesen / erhalten)
     list = list.filter(e => pf === 'shared'
-      ? (e.type === 'expense' && e.forWhom === 'shared') || (e.type === 'saving' && e.saver === 'shared') || (e.type === 'income' && e.person === 'shared')
-      : e.type === 'income' ? (e.person === pf || (e.person === 'shared' && e.receivedBy === pf))
+      ? (e.type === 'expense' && e.forWhom === 'shared') || (e.type === 'income' && e.person === 'shared') || (e.type === 'saving' && e.paidBy === 'joint')
+      : pf === 'pots' ? (e.type === 'expense' && e.paidBy === 'pot')
+      : e.type === 'income' ? (e.receivedBy === pf || e.person === pf)
       : e.type === 'transfer' ? (e.paidBy === pf || e.to === pf)
       : e.paidBy === pf);
   }
@@ -1054,13 +1117,14 @@ function renderEntries() {
     const c = (inc || sv || tr) ? null : (catById(e.catId) || NO_CAT);
     const [, m, d] = e.date.split('-');
     const bg = inc ? 'var(--income)' : sv ? 'var(--saving)' : tr ? 'var(--c8)' : color(c.color);
-    const fallback = inc ? 'Einnahme' : sv ? TARGETS[e.target] : tr ? 'Überweisung' : c.name;
+    const fallback = inc ? 'Einnahme' : sv ? potName(e.target) : tr ? 'Überweisung' : c.name;
     const letter = tr ? '⇄' : esc((e.name || fallback).trim().charAt(0).toUpperCase() || '•');
     const forHTML = f => f === 'shared' ? 'Gemeinsam' : pn(f);
-    const meta = inc ? (e.person === 'shared' ? `gemeinsam · auf Konto ${pn(e.receivedBy)}` : 'von ' + pn(e.person))
-      : sv ? `${TARGETS[e.target]} · ${e.saver === 'shared' ? 'Gemeinsam (von ' + pn(e.paidBy) + ')' : pn(e.saver)}`
-      : tr ? `${pn(e.paidBy)} → ${pn(e.to)} · Überweisung`
-      : `${pn(e.paidBy)} → ${forHTML(e.forWhom)} · ${esc(c.name)}`;
+    const payer = e.paidBy === 'pot' ? `<span class="pn" style="color:var(--tc2)">${esc(potName(e.pot))}</span>` : acctHTML(e.paidBy);
+    const meta = inc ? (e.person === 'shared' ? `gemeinsam → ${acctHTML(e.receivedBy)}` : e.receivedBy === e.person ? 'von ' + pn(e.person) : `von ${pn(e.person)} → ${acctHTML(e.receivedBy)}`)
+      : sv ? `${acctHTML(e.paidBy)} → ${esc(potName(e.target))}`
+      : tr ? `${acctHTML(e.paidBy)} → ${acctHTML(e.to)} · Überweisung`
+      : `${payer} → ${forHTML(e.forWhom)} · ${esc(c.name)}`;
     return `<button class="row" data-id="${e.id}">
       <span class="icon${tr ? ' tr' : ''}" style="background:${bg}">${letter}</span>
       <span class="main"><div class="title">${esc(e.name || fallback)}${e.fixed ? '<span class="badge">fix</span>' : ''}</div>
@@ -1093,6 +1157,7 @@ function renderSettings() {
   $('#lastBackup').textContent = lb ? `Letzte Sicherung: ${new Date(lb).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}` : 'Noch keine Sicherung exportiert.';
   $$('#themeSeg button').forEach(b => b.classList.toggle('on', b.dataset.theme === state.settings.theme));
   if (typeof renderSyncCard === 'function') try { renderSyncCard(); } catch {}
+  renderPotEdit();
   const st = state.settings;
   if (document.activeElement !== $('#sName0')) $('#sName0').value = st.people[0];
   if (document.activeElement !== $('#sName1')) $('#sName1').value = st.people[1];
@@ -1105,6 +1170,34 @@ function renderSettings() {
     }));
   }
 }
+function renderPotEdit() {
+  const el = $('#potEditList');
+  if (el.contains(document.activeElement)) return; // beim Tippen nicht neu zeichnen
+  el.innerHTML = pots().map(p => `<div class="pot-edit" data-id="${esc(p.id)}">
+      <input class="input" value="${esc(p.name)}" maxlength="30" aria-label="Name des Topfs">
+      <label><input type="checkbox" ${p.invest ? 'checked' : ''}>Investment</label>
+      <button type="button" class="del" aria-label="Topf löschen">×</button>
+    </div>`).join('');
+  $$('.pot-edit', el).forEach(row => {
+    const id = row.dataset.id, pot = () => potById(id);
+    $('input.input', row).addEventListener('input', e => { if (pot()) { pot().name = e.target.value.slice(0, 30) || 'Topf'; save(); } });
+    $('input.input', row).addEventListener('change', () => render());
+    $('input[type=checkbox]', row).addEventListener('change', e => { if (pot()) { pot().invest = e.target.checked; save(); render(); } });
+    $('.del', row).addEventListener('click', () => {
+      const n = state.entries.filter(x => (x.type === 'saving' && x.target === id) || (x.type === 'expense' && x.paidBy === 'pot' && x.pot === id)).length;
+      if (n) { alert(`Dieser Topf wird noch von ${n} Buchung(en) verwendet und kann nicht gelöscht werden. Du kannst ihn aber umbenennen.`); return; }
+      if (pots().length <= 1) { alert('Mindestens ein Spartopf muss bleiben.'); return; }
+      if (!confirm(`Spartopf „${pot().name}“ löschen?`)) return;
+      state.settings.pots = pots().filter(x => x.id !== id); save(); render();
+    });
+  });
+}
+$('#addPot').addEventListener('click', () => {
+  state.settings.pots = [...pots(), { id: 'pot-' + uid(), name: 'Neuer Topf', invest: false }];
+  save(); render();
+  const inputs = $$('#potEditList input.input'); const last = inputs[inputs.length - 1];
+  if (last) { last.focus(); last.select(); }
+});
 ['sName0', 'sName1'].forEach((id, i) => $('#' + id).addEventListener('input', e => {
   state.settings.people[i] = e.target.value.slice(0, 20); save();
 }));
@@ -1158,8 +1251,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay
 
 /* ---- Buchung ---- */
 let editing = null, entryType = 'expense';
-let selRecv = null, selTrFrom = null;
-let selFrom = null, selPaid = null, selFor = null, selTarget = null, selSaver = null, selSavePaid = null;
+let selFrom = null, selRecv = null, selPaid = null, selPayPot = null, selFor = null, selSaveFrom = null, selTarget = null, selTrFrom = null, selTrTo = null;
 function segButtons(el, opts, val, onPick) {
   // Personen-Knöpfe (0/1) bekommen die Personenfarbe
   el.innerHTML = opts.map(([v, label]) => {
@@ -1172,37 +1264,40 @@ function segButtons(el, opts, val, onPick) {
     $$('button', el).forEach(x => x.classList.toggle('on', x === b));
   }));
 }
+const show = (id, on) => { $(id).style.display = on ? '' : 'none'; };
 function renderPersonSegs() {
   const P = [[0, pname(0)], [1, pname(1)]];
-  segButtons($('#fFrom'), [...P, ['shared', 'Gemeinsam']], selFrom, v => { selFrom = v; updateRecv(); });
-  segButtons($('#fRecv'), P, selRecv, v => selRecv = v);
-  updateRecv();
-  segButtons($('#fPaid'), P, selPaid, v => selPaid = v);
+  const A = [...P, ['joint', JOINT_S]];
+  const POTS = pots().map(p => [p.id, p.name]);
+  segButtons($('#fFrom'), [...P, ['shared', 'Gemeinsam']], selFrom, v => { selFrom = v; selRecv = v === 'shared' ? 'joint' : v; renderPersonSegs(); });
+  segButtons($('#fRecv'), A, selRecv, v => selRecv = v);
+  segButtons($('#fPaid'), [...A, ['pot', 'Spartopf']], selPaid, v => { selPaid = v; updateFields(); });
+  segButtons($('#fPayPot'), POTS, selPayPot, v => selPayPot = v);
   segButtons($('#fFor'), [...P, ['shared', 'Gemeinsam']], selFor, v => selFor = v);
-  segButtons($('#fTarget'), [['invest', 'Investieren'], ['savings', 'Sparkonto']], selTarget, v => selTarget = v);
-  segButtons($('#fSaver'), [...P, ['shared', 'Gemeinsam']], selSaver, v => { selSaver = v; updateSavePaid(); });
-  segButtons($('#fSavePaid'), P, selSavePaid, v => selSavePaid = v);
-  updateSavePaid();
-  segButtons($('#fTrFrom'), P, selTrFrom, v => { selTrFrom = v; updateTrHint(); });
+  segButtons($('#fSaveFrom'), A, selSaveFrom, v => selSaveFrom = v);
+  segButtons($('#fTarget'), POTS, selTarget, v => selTarget = v);
+  segButtons($('#fTrFrom'), A, selTrFrom, v => { selTrFrom = v; if (selTrTo === v) selTrTo = null; renderPersonSegs(); });
+  segButtons($('#fTrTo'), A.filter(([v]) => v !== selTrFrom), selTrTo, v => { selTrTo = v; updateTrHint(); });
+  updateFields();
+}
+function updateTrHint() {
+  $('#trHint').innerHTML = selTrFrom == null || selTrTo == null ? '' : `${acctHTML(selTrFrom)} überweist an ${acctHTML(selTrTo)}. Zählt nicht als Ausgabe des Haushalts.`;
+}
+function updateFields() {
+  const t = entryType;
+  show('#incomeFromField', t === 'income'); show('#incRecvField', t === 'income');
+  show('#paidByField', t === 'expense'); show('#payPotField', t === 'expense' && selPaid === 'pot');
+  show('#forWhomField', t === 'expense'); show('#catField', t === 'expense');
+  show('#saveFromField', t === 'saving'); show('#targetField', t === 'saving');
+  show('#transferField', t === 'transfer'); show('#transferToField', t === 'transfer');
   updateTrHint();
 }
-function updateTrHint() { $('#trHint').innerHTML = selTrFrom == null ? '' : `${pn(selTrFrom)} überweist an ${pn(1 - selTrFrom)}. Zählt nicht als Ausgabe des Haushalts.`; }
-function updateRecv() { $('#incRecvField').style.display = entryType === 'income' && selFrom === 'shared' ? '' : 'none'; }
-function updateSavePaid() { $('#savePaidField').style.display = entryType === 'saving' && selSaver === 'shared' ? '' : 'none'; }
 function setType(t) {
   entryType = t;
   $$('#typeSeg button').forEach(b => b.classList.toggle('on', b.dataset.type === t));
-  $('#catField').style.display = t === 'expense' ? '' : 'none';
-  $('#paidByField').style.display = t === 'expense' ? '' : 'none';
-  $('#forWhomField').style.display = t === 'expense' ? '' : 'none';
-  $('#incomeFromField').style.display = t === 'income' ? '' : 'none';
-  updateRecv();
-  $('#targetField').style.display = t === 'saving' ? '' : 'none';
-  $('#saverField').style.display = t === 'saving' ? '' : 'none';
-  $('#transferField').style.display = t === 'transfer' ? '' : 'none';
-  updateSavePaid();
   $$('.seg.invalid').forEach(x => x.classList.remove('invalid'));
-  $('#fName').placeholder = { expense: 'z. B. Miete, Supermarkt, Tanken', income: 'z. B. Gehalt, Bonus, Nebenjob', saving: 'z. B. ETF-Sparplan, Notgroschen', transfer: 'z. B. Anteil Miete, Haushaltsgeld' }[t];
+  updateFields();
+  $('#fName').placeholder = { expense: 'z. B. Miete, Supermarkt, Tanken', income: 'z. B. Gehalt, Bonus, Familienbeihilfe', saving: 'z. B. ETF-Sparplan, Urlaub', transfer: 'z. B. Anteil Miete, Haushaltsgeld' }[t];
 }
 $$('#typeSeg button').forEach(b => b.addEventListener('click', () => setType(b.dataset.type)));
 
@@ -1213,22 +1308,25 @@ function openEntry(e) {
   $('#entryError').textContent = '';
   $('#fCat').innerHTML = state.categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('') + `<option value="">Ohne Rubrik</option>`;
   const defDate = monthKey(todayISO()) === current ? todayISO() : `${current}-01`;
-  setType(e ? e.type : (['income', 'saving', 'transfer'].includes(entryFilter) ? entryFilter : 'expense'));
   $('#fAmount').value = e ? amountStr(e.amount) : '';
   $('#fName').value = e ? e.name : '';
   $('#fCat').value = e ? (e.catId ?? '') : (catFilterVal && catFilterVal !== '_none' ? catFilterVal : (state.categories[0]?.id ?? ''));
   $('#fDate').value = e ? e.date : defDate;
   $('#fFixed').checked = e ? !!e.fixed : (fixFilterVal === 'fix' && entryFilter === 'expense');
   const last = state.settings.lastPayer === 1 ? 1 : 0;
-  selFrom = e && e.type === 'income' ? e.person : last;
-  selRecv = e && e.type === 'income' && e.person === 'shared' ? e.receivedBy : last;
-  selPaid = e && e.type === 'expense' ? e.paidBy : last;
-  selFor = e && e.type === 'expense' ? e.forWhom : null; // Pflichtangabe, bewusst nicht vorbelegt
-  selTarget = e && e.type === 'saving' ? e.target : null; // Pflichtangabe
-  selSaver = e && e.type === 'saving' ? e.saver : last;
-  selSavePaid = e && e.type === 'saving' ? e.paidBy : last;
-  selTrFrom = e && e.type === 'transfer' ? e.paidBy : last;
+  const T = e ? e.type : null;
+  selFrom = T === 'income' ? e.person : last;
+  selRecv = T === 'income' ? e.receivedBy : last;
+  selPaid = T === 'expense' ? e.paidBy : last;
+  selPayPot = T === 'expense' && e.paidBy === 'pot' ? e.pot : null;
+  selFor = T === 'expense' ? e.forWhom : null; // Pflichtangabe, bewusst nicht vorbelegt
+  selSaveFrom = T === 'saving' ? e.paidBy : last;
+  selTarget = T === 'saving' ? e.target : null; // Pflichtangabe
+  selTrFrom = T === 'transfer' ? e.paidBy : last;
+  selTrTo = T === 'transfer' ? e.to : null;
+  entryType = e ? e.type : (['income', 'saving', 'transfer'].includes(entryFilter) ? entryFilter : 'expense');
   renderPersonSegs();
+  setType(entryType);
   openOverlay('#entryOverlay');
   if (!e && matchMedia('(pointer:fine)').matches) setTimeout(() => $('#fAmount').focus(), 50);
 }
@@ -1236,29 +1334,31 @@ $('#fab').addEventListener('click', () => openEntry());
 
 $('#entryForm').addEventListener('submit', ev => {
   ev.preventDefault();
+  const err = (seg, msg) => { if (seg) $(seg).classList.add('invalid'); $('#entryError').textContent = msg; };
   const amount = parseAmount($('#fAmount').value);
-  if (!(amount > 0)) { $('#entryError').textContent = 'Bitte einen Betrag größer als 0 eingeben.'; return; }
+  if (!(amount > 0)) return err(null, 'Bitte einen Betrag größer als 0 eingeben.');
   const date = $('#fDate').value;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { $('#entryError').textContent = 'Bitte ein Datum wählen.'; return; }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return err(null, 'Bitte ein Datum wählen.');
+  const t = entryType;
+  if (t === 'income' && selFrom == null) return err('#fFrom', 'Bitte angeben, von wem das Geld kommt.');
+  if (t === 'income' && selRecv == null) return err('#fRecv', 'Bitte angeben, auf welches Konto es eingegangen ist.');
+  if (t === 'expense' && selPaid == null) return err('#fPaid', 'Bitte angeben, wer bezahlt hat.');
+  if (t === 'expense' && selPaid === 'pot' && !selPayPot) return err('#fPayPot', 'Bitte den Spartopf wählen.');
+  if (t === 'expense' && selFor == null) return err('#fFor', 'Bitte angeben, für wen die Ausgabe war.');
+  if (t === 'saving' && selSaveFrom == null) return err('#fSaveFrom', 'Bitte angeben, von welchem Konto.');
+  if (t === 'saving' && !selTarget) return err('#fTarget', 'Bitte den Spartopf wählen.');
+  if (t === 'transfer' && selTrFrom == null) return err('#fTrFrom', 'Bitte angeben, von welchem Konto.');
+  if (t === 'transfer' && (selTrTo == null || selTrTo === selTrFrom)) return err('#fTrTo', 'Bitte angeben, an welches Konto.');
   const fixed = $('#fFixed').checked;
-  if (entryType === 'income' && selFrom == null) { $('#fFrom').classList.add('invalid'); $('#entryError').textContent = 'Bitte angeben, von wem das Einkommen ist.'; return; }
-  if (entryType === 'expense' && selPaid == null) { $('#fPaid').classList.add('invalid'); $('#entryError').textContent = 'Bitte angeben, wer bezahlt hat.'; return; }
-  if (entryType === 'expense' && selFor == null) { $('#fFor').classList.add('invalid'); $('#entryError').textContent = 'Bitte angeben, für wen die Ausgabe war.'; return; }
-  if (entryType === 'saving' && selTarget == null) { $('#fTarget').classList.add('invalid'); $('#entryError').textContent = 'Bitte wählen: Investieren oder Sparkonto.'; return; }
-  if (entryType === 'transfer' && selTrFrom == null) { $('#fTrFrom').classList.add('invalid'); $('#entryError').textContent = 'Bitte angeben, wer überweist.'; return; }
-  if (entryType === 'saving' && selSaver == null) { $('#fSaver').classList.add('invalid'); $('#entryError').textContent = 'Bitte angeben, wer spart.'; return; }
-  const data = {
-    type: entryType, amount, date, fixed,
-    name: $('#fName').value.trim(),
-    catId: entryType === 'expense' ? ($('#fCat').value || null) : null
-  };
-  if (entryType === 'income') { data.person = selFrom; if (selFrom === 'shared') data.receivedBy = selRecv; }
-  else if (entryType === 'transfer') { data.paidBy = selTrFrom; data.to = 1 - selTrFrom; }
-  else if (entryType === 'saving') { data.target = selTarget; data.saver = selSaver; data.paidBy = selSaver === 'shared' ? selSavePaid : selSaver; }
-  else { data.paidBy = selPaid; data.forWhom = selFor; }
-  state.settings.lastPayer = entryType === 'income' ? (selFrom === 'shared' ? selRecv : selFrom) : data.paidBy;
+  const data = { type: t, amount, date, fixed, name: $('#fName').value.trim(), catId: t === 'expense' ? ($('#fCat').value || null) : null };
+  if (t === 'income') { data.person = selFrom; data.receivedBy = selRecv; }
+  else if (t === 'expense') { data.paidBy = selPaid; data.forWhom = selFor; if (selPaid === 'pot') data.pot = selPayPot; }
+  else if (t === 'saving') { data.paidBy = selSaveFrom; data.target = selTarget; }
+  else { data.paidBy = selTrFrom; data.to = selTrTo; }
+  const who = t === 'income' ? (selRecv === 'joint' ? selFrom : selRecv) : data.paidBy;
+  if (who === 0 || who === 1) state.settings.lastPayer = who;
   if (editing) {
-    for (const k of ['person', 'receivedBy', 'paidBy', 'forWhom', 'target', 'saver', 'catId', 'to']) delete editing[k];
+    for (const k of ['person', 'receivedBy', 'paidBy', 'forWhom', 'target', 'saver', 'catId', 'to', 'pot']) delete editing[k];
     Object.assign(editing, data);
     if (fixed && !editing.series) editing.series = uid();
   } else {
@@ -1267,7 +1367,7 @@ $('#entryForm').addEventListener('submit', ev => {
   save(); closeOverlays();
   if (monthKey(date) !== current) { current = monthKey(date); }
   render();
-  toast(editing ? 'Gespeichert' : { income: 'Einnahme hinzugefügt', expense: 'Ausgabe hinzugefügt', saving: 'Sparbuchung hinzugefügt', transfer: 'Überweisung hinzugefügt' }[entryType]);
+  toast(editing ? 'Gespeichert' : { income: 'Einnahme hinzugefügt', expense: 'Ausgabe hinzugefügt', saving: 'Sparbuchung hinzugefügt', transfer: 'Überweisung hinzugefügt' }[t]);
 });
 $('#deleteEntry').addEventListener('click', () => {
   if (!editing) return;
@@ -1356,12 +1456,12 @@ $('#importFile').addEventListener('change', async e => {
   } catch (err) { alert('Die Datei konnte nicht gelesen werden. Ist es eine Budget-Sicherung (.json)?'); }
 });
 $('#csvBtn').addEventListener('click', () => {
-  const rows = [['Datum', 'Typ', 'Bezeichnung', 'Rubrik / Sparziel', 'Betrag', 'Von / Bezahlt von', 'Für wen', 'Fixposten']];
+  const rows = [['Datum', 'Typ', 'Bezeichnung', 'Rubrik / Spartopf', 'Betrag', 'Von / Bezahlt von', 'Für wen / An / Konto', 'Fixposten']];
   monthEntries(current).sort((a, b) => a.date.localeCompare(b.date)).forEach(e => {
     const typ = { income: 'Einnahme', expense: 'Ausgabe', saving: 'Sparen', transfer: 'Überweisung' }[e.type];
-    const rub = (e.type === 'income' || e.type === 'transfer') ? '' : e.type === 'saving' ? TARGETS[e.target] : (catById(e.catId) || NO_CAT).name;
-    const fuer = e.type === 'income' ? '' : e.type === 'transfer' ? pname(e.to) : e.type === 'saving' ? saverLabel(e.saver) : forLabel(e.forWhom);
-    rows.push([e.date, typ, e.name, rub, amountStr(e.type === 'income' ? e.amount : -e.amount), e.type === 'income' ? (e.person === 'shared' ? `Gemeinsam (Konto ${pname(e.receivedBy)})` : pname(e.person)) : pname(e.paidBy), fuer, e.fixed ? 'ja' : 'nein']);
+    const rub = (e.type === 'income' || e.type === 'transfer') ? '' : e.type === 'saving' ? potName(e.target) : (catById(e.catId) || NO_CAT).name;
+    const fuer = e.type === 'income' ? acctName(e.receivedBy) : e.type === 'transfer' ? acctName(e.to) : e.type === 'saving' ? potName(e.target) : forLabel(e.forWhom);
+    rows.push([e.date, typ, e.name, rub, amountStr(e.type === 'income' ? e.amount : -e.amount), e.type === 'income' ? (e.person === 'shared' ? 'Gemeinsam' : pname(e.person)) : e.paidBy === 'pot' ? potName(e.pot) : acctName(e.paidBy), fuer, e.fixed ? 'ja' : 'nein']);
   });
   const csv = '﻿' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';')).join('\r\n');
   download(`budget-${current}.csv`, csv, 'text/csv;charset=utf-8');
@@ -1407,7 +1507,7 @@ function itemsFromState() {
   for (const e of state.entries) m.set(e.id, { kind: 'entry', data: e });
   state.categories.forEach((c, i) => m.set(c.id, { kind: 'category', data: { ...c, order: i } }));
   const st = state.settings;
-  m.set('settings', { kind: 'settings', data: { people: st.people, colors: st.colors } });
+  m.set('settings', { kind: 'settings', data: { people: st.people, colors: st.colors, pots: st.pots } });
   return m;
 }
 function replaceInPlace(target, src) { for (const k of Object.keys(target)) delete target[k]; Object.assign(target, src); }
@@ -1425,6 +1525,7 @@ function applyItem(r) {
   } else if (r.kind === 'settings' && !r.deleted && r.data) {
     const d = r.data;
     if (Array.isArray(d.people) && d.people.length === 2) state.settings.people = d.people.slice();
+    if (validPots(d.pots)) state.settings.pots = d.pots.map(p => ({ id: p.id, name: p.name, invest: !!p.invest }));
     if (Array.isArray(d.colors) && d.colors.length === 2 && d.colors.every(c => Number.isInteger(c) && c >= 0 && c < 9)) state.settings.colors = d.colors.slice();
   }
 }

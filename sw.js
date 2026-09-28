@@ -1,6 +1,6 @@
 // Service Worker: macht die App offline nutzbar.
 // Bei Änderungen an der App die Versionsnummer erhöhen.
-const CACHE = 'budget-v7';
+const CACHE = 'budget-v8';
 const FILES = ['./', './index.html', './config.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
