@@ -780,7 +780,7 @@ function renderPeople() {
     const from = b > 0 ? 1 : 0, to = b > 0 ? 0 : 1;
     settle = `<div class="settle"><span>⇄</span><span><b>${esc(pname(from))}</b> schuldet <b>${esc(pname(to))}</b> <b class="num">${fmt(Math.abs(b))}</b></span></div>`;
   }
-  $('#people').innerHTML = `<div class="people">${col(0)}${col(1)}</div>${settle}
+  $('#people').innerHTML = `<div class="people">${col(0)}${col(1)}</div>
     <div class="split-info">Bezahlt: ${esc(pname(0))} ${fmt(st.paid[0])} · ${esc(pname(1))} ${fmt(st.paid[1])} ${st.sharedInc ? ` · gemeinsame Einnahmen ${fmt(st.sharedInc)}` : ''} · gemeinsame Ausgaben ${fmt(st.shared)}${st.sharedSav ? ` · gemeinsam gespart ${fmt(st.sharedSav)}` : ''}</div>`;
 }
 
